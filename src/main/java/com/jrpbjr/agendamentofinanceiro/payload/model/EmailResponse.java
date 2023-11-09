@@ -1,4 +1,4 @@
-package com.jrpbjr.agendamentofinanceiro.payload;
+package com.jrpbjr.agendamentofinanceiro.payload.model;
 
 public class EmailResponse {
 
