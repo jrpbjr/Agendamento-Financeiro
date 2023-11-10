@@ -6,11 +6,12 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.boot.autoconfigure.mail.MailProperties;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import javax.mail.MessagingException;
@@ -19,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 
 @Component
 public class EmailJob extends QuartzJobBean {
+    private static final Logger logger = LoggerFactory.getLogger(EmailJob.class);
 
     @Autowired
     private JavaMailSender mailSender;
@@ -27,10 +29,10 @@ public class EmailJob extends QuartzJobBean {
     private MailProperties mailProperties;
 
     @Override
-    protected void executeInternal(JobExecutionContext jobExecutioncontext) throws JobExecutionException {
+    protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        logger.info("Executing Job with key {}", jobExecutionContext.getJobDetail().getKey());
 
-        JobDataMap jobDataMap = jobExecutioncontext.getMergedJobDataMap();
-
+        JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
         String subject = jobDataMap.getString("subject");
         String body = jobDataMap.getString("body");
         String recipientEmail = jobDataMap.getString("email");
@@ -38,19 +40,20 @@ public class EmailJob extends QuartzJobBean {
         sendMail(mailProperties.getUsername(), recipientEmail, subject, body);
     }
 
-    private void sendMail(String frontEmail, String toEmail, String subject, String body){
-
-        try{
+    private void sendMail(String fromEmail, String toEmail, String subject, String body) {
+        try {
+            logger.info("Sending Email to {}", toEmail);
             MimeMessage message = mailSender.createMimeMessage();
+
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, StandardCharsets.UTF_8.toString());
             messageHelper.setSubject(subject);
             messageHelper.setText(body, true);
+            messageHelper.setFrom(fromEmail);
             messageHelper.setTo(toEmail);
 
             mailSender.send(message);
-        }catch (MessagingException ex){
-            System.out.println(ex);
+        } catch (MessagingException ex) {
+            logger.error("Failed to send email to {}", toEmail);
         }
-
     }
 }
