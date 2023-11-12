@@ -31,8 +31,8 @@ public class EmailJob extends QuartzJobBean {
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         logger.info("Executing Job with key {}", jobExecutionContext.getJobDetail().getKey());
-
         JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
+
         String subject = jobDataMap.getString("subject");
         String body = jobDataMap.getString("body");
         String recipientEmail = jobDataMap.getString("email");
