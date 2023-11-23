@@ -14,6 +14,8 @@ public class OperacaoServiceImpl {
             taxa = calcularTaxacaoTipoA(operacaoModel);
         } else if (Tipo.B.equals(operacaoModel.getTipo())){
             taxa = calcularTaxacaoTipoB(operacaoModel);
+        } else if (Tipo.C.equals(operacaoModel.getTipo())){
+            taxa = calcularTaxacaoTipoC(operacaoModel);
         }
         return taxa;
     }
@@ -28,7 +30,7 @@ public class OperacaoServiceImpl {
 
     private Double calcularTaxacaoTipoB(OperacaoModel operacaoModel){
 
-        Double diferencaDeDias = this.calcularDiferencaDeDias(Calendar.getInstance().getTime(),Calendar.getInstance().getTime());
+        Double diferencaDeDias = this.calcularDiferencaDeDias(Calendar.getInstance().getTime(),operacaoModel.getDataAgendamento());
 
         Double taxa = null;
 
@@ -39,5 +41,28 @@ public class OperacaoServiceImpl {
         }
         return taxa;
     }
+
+    private Double calcularTaxacaoTipoC(OperacaoModel operacaoModel) {
+        Double diferencaDeDias = this.calcularDiferencaDeDias(Calendar.getInstance().getTime(), operacaoModel.getDataAgendamento());
+        Double taxa = null;
+
+        if (diferencaDeDias > 30) {
+            taxa = (operacaoModel.getValorTransferencia() * 0.012);
+        } else if ((diferencaDeDias > 25) && ( diferencaDeDias <= 30)){
+            taxa = (operacaoModel.getValorTransferencia() * 0.021);
+        } else if ((diferencaDeDias > 20) && (diferencaDeDias <= 25)){
+            taxa = (operacaoModel.getValorTransferencia() * 0.043);
+        } else if ((diferencaDeDias > 15) && (diferencaDeDias <= 20)){
+            taxa = (operacaoModel.getValorTransferencia() * 0.054);
+        } else if ((diferencaDeDias > 10) && (diferencaDeDias <= 15)){
+            taxa = (operacaoModel.getValorTransferencia() * 0.067);
+        } else if ((diferencaDeDias > 5) && (diferencaDeDias <= 10)){
+            taxa = (operacaoModel.getValorTransferencia() * 0.074);
+        } else if ((diferencaDeDias > 0) && (diferencaDeDias <= 5)){
+            taxa = (operacaoModel.getValorTransferencia() * 0.083);
+        }
+        return taxa;
+    }
+
 
 }
