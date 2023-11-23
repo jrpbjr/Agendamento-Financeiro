@@ -3,11 +3,12 @@ package com.jrpbjr.agendamentofinanceiro.payload.service.impl;
 import com.jrpbjr.agendamentofinanceiro.payload.enums.Tipo;
 import com.jrpbjr.agendamentofinanceiro.payload.exception.NegocioException;
 import com.jrpbjr.agendamentofinanceiro.payload.model.OperacaoModel;
+import com.jrpbjr.agendamentofinanceiro.payload.service.OperacaoService;
 
 import java.util.Calendar;
 import java.util.Date;
 
-public class OperacaoServiceImpl {
+public class OperacaoServiceImpl implements OperacaoService {
 
     public Double calcularTaxa(OperacaoModel operacaoModel){
         Double taxa = null;
