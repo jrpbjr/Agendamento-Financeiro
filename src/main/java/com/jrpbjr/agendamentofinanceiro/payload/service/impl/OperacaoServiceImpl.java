@@ -1,6 +1,7 @@
 package com.jrpbjr.agendamentofinanceiro.payload.service.impl;
 
 import com.jrpbjr.agendamentofinanceiro.payload.enums.Tipo;
+import com.jrpbjr.agendamentofinanceiro.payload.exception.NegocioException;
 import com.jrpbjr.agendamentofinanceiro.payload.model.OperacaoModel;
 
 import java.util.Calendar;
@@ -21,6 +22,16 @@ public class OperacaoServiceImpl {
         }
         return taxa;
     }
+
+    public void validarTaxaAgendamento(OperacaoModel operacaoMode) throws NegocioException{
+        Double taxaReal = this.calcularTaxa(operacaoMode);
+
+        if (taxaReal.doubleValue() != operacaoMode.getTaxa()){
+            throw new NegocioException("Valor da taxa esta incorreta.");
+        }
+
+    }
+
 
     private Double calcularDiferencaDeDias(Date dataMenor, Date dataMaior) {
         return new Double((dataMaior.getTime() - dataMenor.getTime()) / 86400000L);
