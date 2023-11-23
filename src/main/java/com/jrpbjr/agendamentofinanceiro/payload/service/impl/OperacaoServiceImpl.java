@@ -16,6 +16,8 @@ public class OperacaoServiceImpl {
             taxa = calcularTaxacaoTipoB(operacaoModel);
         } else if (Tipo.C.equals(operacaoModel.getTipo())){
             taxa = calcularTaxacaoTipoC(operacaoModel);
+        } else if (Tipo.D.equals(operacaoModel.getTipo())){
+            taxa = calcularTaxacaoTipoD(operacaoModel);
         }
         return taxa;
     }
@@ -60,6 +62,20 @@ public class OperacaoServiceImpl {
             taxa = (operacaoModel.getValorTransferencia() * 0.074);
         } else if ((diferencaDeDias > 0) && (diferencaDeDias <= 5)){
             taxa = (operacaoModel.getValorTransferencia() * 0.083);
+        }
+        return taxa;
+    }
+
+    private Double calcularTaxacaoTipoD(OperacaoModel operacaoModel){
+        Double taxa = null;
+        Double valorTransferencia = operacaoModel.getValorTransferencia();
+
+        if (valorTransferencia.doubleValue() <= 25000.00){
+            taxa = this.calcularTaxacaoTipoA(operacaoModel);
+        } else if((valorTransferencia.doubleValue() > 25000.00) && (valorTransferencia.doubleValue() <= 120000.00)){
+            taxa = this.calcularTaxacaoTipoB(operacaoModel);
+        } else if (valorTransferencia.doubleValue() > 120000.00) {
+            taxa = this.calcularTaxacaoTipoC(operacaoModel);
         }
         return taxa;
     }
