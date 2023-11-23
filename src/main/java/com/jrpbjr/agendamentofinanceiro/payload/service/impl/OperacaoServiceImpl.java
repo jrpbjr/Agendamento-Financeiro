@@ -23,7 +23,7 @@ public class OperacaoServiceImpl {
         return taxa;
     }
 
-    public void validarTaxaAgendamento(OperacaoModel operacaoMode) throws NegocioException{
+    public void validarTaxa(OperacaoModel operacaoMode) throws NegocioException{
         Double taxaReal = this.calcularTaxa(operacaoMode);
 
         if (taxaReal.doubleValue() != operacaoMode.getTaxa()){
@@ -31,6 +31,8 @@ public class OperacaoServiceImpl {
         }
 
     }
+
+
 
 
     private Double calcularDiferencaDeDias(Date dataMenor, Date dataMaior) {
