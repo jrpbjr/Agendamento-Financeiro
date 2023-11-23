@@ -23,16 +23,18 @@ public class OperacaoServiceImpl {
         return taxa;
     }
 
-    public void validarTaxa(OperacaoModel operacaoMode) throws NegocioException{
-        Double taxaReal = this.calcularTaxa(operacaoMode);
+    public void validarTaxa(OperacaoModel operacaoModel) throws NegocioException{
+        Double taxaReal = this.calcularTaxa(operacaoModel);
 
-        if (taxaReal.doubleValue() != operacaoMode.getTaxa()){
+        if (taxaReal.doubleValue() != operacaoModel.getTaxa()){
             throw new NegocioException("Valor da taxa esta incorreta.");
         }
 
     }
 
-
+    private void validar(OperacaoModel operacaoModel) throws NegocioException{
+        this.validarTaxa(operacaoModel);
+    }
 
 
     private Double calcularDiferencaDeDias(Date dataMenor, Date dataMaior) {
