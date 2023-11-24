@@ -32,6 +32,27 @@ class AgendamentoFinanceiroApplicationTests {
 
 	}
 
+	@Test
+	public void taxaTipoBTest() throws NegocioException {
+		Date dataAte30Dias = this.adicionarDia( new Date() , 15);
+		Date dataDemais = this.adicionarDia( new Date() , 35);
+
+		OperacaoModel agendamentoAte30Dias = this.criarAgendamento(dataAte30Dias, Tipo.B, 100.00);
+		OperacaoModel agendamentoDemais = this.criarAgendamento(dataDemais, Tipo.B, 100.00);
+
+		agendamentoAte30Dias.setTaxa( this.operacaoService.calcularTaxa(agendamentoAte30Dias) );
+		agendamentoDemais.setTaxa( this.operacaoService.calcularTaxa(agendamentoDemais) );
+
+		this.operacaoService.validarTaxa(agendamentoAte30Dias);
+		this.operacaoService.validarTaxa(agendamentoDemais);
+
+		Assertions.assertEquals(new Double(agendamentoAte30Dias.getValorTransferencia() * 0.1), agendamentoAte30Dias.getTaxa());
+		Assertions.assertEquals(new Double(agendamentoDemais.getValorTransferencia() * 0.08), agendamentoDemais.getTaxa());
+
+	}
+
+
+
 	private Date adicionarDia(Date date, int qtdDias) {
 		Calendar calendario = Calendar.getInstance();
 		calendario.setTime(date);
