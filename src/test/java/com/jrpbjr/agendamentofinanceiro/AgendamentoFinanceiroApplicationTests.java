@@ -29,7 +29,7 @@ class AgendamentoFinanceiroApplicationTests {
 		OperacaoModel operacaoModel = this.criarAgendamento(new Date(), Tipo.A, 100.00);
 		operacaoModel.setTaxa(this.operacaoService.calcularTaxa(operacaoModel));
 		this.operacaoService.validarTaxa(operacaoModel);
-		Assertions.assertEquals(new Double(2 + (operacaoModel.getValorTransferencia() * 0.03)),operacaoModel.getTaxa());
+		Assertions.assertEquals(2 + (operacaoModel.getValorTransferencia() * 0.03),operacaoModel.getTaxa());
 
 
 	}
@@ -48,8 +48,8 @@ class AgendamentoFinanceiroApplicationTests {
 		this.operacaoService.validarTaxa(agendamentoAte30Dias);
 		this.operacaoService.validarTaxa(agendamentoDemais);
 
-		Assertions.assertEquals(new Double(agendamentoAte30Dias.getValorTransferencia() * 0.1), agendamentoAte30Dias.getTaxa());
-		Assertions.assertEquals(new Double(agendamentoDemais.getValorTransferencia() * 0.08), agendamentoDemais.getTaxa());
+		Assertions.assertEquals(agendamentoAte30Dias.getValorTransferencia() * 0.1, agendamentoAte30Dias.getTaxa());
+		Assertions.assertEquals(agendamentoDemais.getValorTransferencia() * 0.08, agendamentoDemais.getTaxa());
 
 	}
 
@@ -64,7 +64,7 @@ class AgendamentoFinanceiroApplicationTests {
 		OperacaoModel agendamentoAte10Dias = this.criarAgendamento( this.adicionarDia( new Date() , 8) , Tipo.C, 100.00);
 		OperacaoModel agendamentoAte5Dias = this.criarAgendamento( this.adicionarDia( new Date() , 3) , Tipo.C, 100.00);
 
-		List<OperacaoModel> listaAgendamentos = new ArrayList<OperacaoModel>();
+		List<OperacaoModel> listaAgendamentos = new ArrayList<>();
 		listaAgendamentos.add( agendamentoMaior30Dias );
 		listaAgendamentos.add( agendamentoAte30Dias );
 		listaAgendamentos.add( agendamentoAte25Dias );
@@ -78,13 +78,59 @@ class AgendamentoFinanceiroApplicationTests {
 			this.operacaoService.validarTaxa(OperacaoModel);
 		}
 
-		Assertions.assertEquals(new Double(agendamentoMaior30Dias.getValorTransferencia() * 0.012), agendamentoMaior30Dias.getTaxa());
-		Assertions.assertEquals(new Double(agendamentoAte30Dias.getValorTransferencia() * 0.021), agendamentoAte30Dias.getTaxa());
-		Assertions.assertEquals(new Double(agendamentoAte25Dias.getValorTransferencia() * 0.043), agendamentoAte25Dias.getTaxa());
-		Assertions.assertEquals(new Double(agendamentoAte20Dias.getValorTransferencia() * 0.054), agendamentoAte20Dias.getTaxa());
-		Assertions.assertEquals(new Double(agendamentoAte15Dias.getValorTransferencia() * 0.067), agendamentoAte15Dias.getTaxa());
-		Assertions.assertEquals(new Double(agendamentoAte10Dias.getValorTransferencia() * 0.074), agendamentoAte10Dias.getTaxa());
-		Assertions.assertEquals(new Double(agendamentoAte5Dias.getValorTransferencia() * 0.083), agendamentoAte5Dias.getTaxa());
+		Assertions.assertEquals(agendamentoMaior30Dias.getValorTransferencia() * 0.012, agendamentoMaior30Dias.getTaxa());
+		Assertions.assertEquals(agendamentoAte30Dias.getValorTransferencia() * 0.021, agendamentoAte30Dias.getTaxa());
+		Assertions.assertEquals(agendamentoAte25Dias.getValorTransferencia() * 0.043, agendamentoAte25Dias.getTaxa());
+		Assertions.assertEquals(agendamentoAte20Dias.getValorTransferencia() * 0.054, agendamentoAte20Dias.getTaxa());
+		Assertions.assertEquals(agendamentoAte15Dias.getValorTransferencia() * 0.067, agendamentoAte15Dias.getTaxa());
+		Assertions.assertEquals(agendamentoAte10Dias.getValorTransferencia() * 0.074, agendamentoAte10Dias.getTaxa());
+		Assertions.assertEquals(agendamentoAte5Dias.getValorTransferencia() * 0.083, agendamentoAte5Dias.getTaxa());
+
+	}
+
+	@Test
+	public void taxaTipoDTest() throws NegocioException {
+		// ATE 25000
+		OperacaoModel agendamentoAte25000 = this.criarAgendamento( this.adicionarDia( new Date() , 0) , Tipo.D, 20000.00);
+		// ATE 120000
+		OperacaoModel agendamentoAte10000030Dias = this.criarAgendamento(this.adicionarDia( new Date() , 15), Tipo.D, 100000.00);
+		OperacaoModel agendamentoAte100000Demais = this.criarAgendamento(this.adicionarDia( new Date() , 35), Tipo.D, 100000.00);
+		// MAIOR 120000
+		OperacaoModel agendamentoMaior120000Maior30Dias = this.criarAgendamento( this.adicionarDia( new Date() , 35) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate30Dias = this.criarAgendamento( this.adicionarDia( new Date() , 30) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate25Dias = this.criarAgendamento( this.adicionarDia( new Date() , 22) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate20Dias = this.criarAgendamento( this.adicionarDia( new Date() , 19) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate15Dias = this.criarAgendamento( this.adicionarDia( new Date() , 13) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate10Dias = this.criarAgendamento( this.adicionarDia( new Date() , 8) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate5Dias = this.criarAgendamento( this.adicionarDia( new Date() , 3) , Tipo.D, 150000.00);
+
+		List<OperacaoModel> listaAgendamentos = new ArrayList<OperacaoModel>();
+		listaAgendamentos.add( agendamentoAte25000 );
+		listaAgendamentos.add( agendamentoAte10000030Dias );
+		listaAgendamentos.add( agendamentoAte100000Demais );
+		listaAgendamentos.add( agendamentoMaior120000Maior30Dias );
+		listaAgendamentos.add( agendamentoMaior120000Ate30Dias );
+		listaAgendamentos.add( agendamentoMaior120000Ate25Dias );
+		listaAgendamentos.add( agendamentoMaior120000Ate20Dias );
+		listaAgendamentos.add( agendamentoMaior120000Ate15Dias );
+		listaAgendamentos.add( agendamentoMaior120000Ate10Dias );
+		listaAgendamentos.add( agendamentoMaior120000Ate5Dias );
+
+		for (OperacaoModel OperacaoModel : listaAgendamentos) {
+			OperacaoModel.setTaxa( this.operacaoService.calcularTaxa(OperacaoModel) );
+			this.operacaoService.validarTaxa(OperacaoModel);
+		}
+
+		Assertions.assertEquals(2 + (agendamentoAte25000.getValorTransferencia() * 0.03), agendamentoAte25000.getTaxa());
+		Assertions.assertEquals(agendamentoAte10000030Dias.getValorTransferencia() * 0.1, agendamentoAte10000030Dias.getTaxa());
+		Assertions.assertEquals(agendamentoAte100000Demais.getValorTransferencia() * 0.08, agendamentoAte100000Demais.getTaxa());
+		Assertions.assertEquals(agendamentoMaior120000Maior30Dias.getValorTransferencia() * 0.012, agendamentoMaior120000Maior30Dias.getTaxa());
+		Assertions.assertEquals(agendamentoMaior120000Ate30Dias.getValorTransferencia() * 0.021, agendamentoMaior120000Ate30Dias.getTaxa());
+		Assertions.assertEquals(agendamentoMaior120000Ate25Dias.getValorTransferencia() * 0.043, agendamentoMaior120000Ate25Dias.getTaxa());
+		Assertions.assertEquals(agendamentoMaior120000Ate20Dias.getValorTransferencia() * 0.054, agendamentoMaior120000Ate20Dias.getTaxa());
+		Assertions.assertEquals(agendamentoMaior120000Ate15Dias.getValorTransferencia() * 0.067, agendamentoMaior120000Ate15Dias.getTaxa());
+		Assertions.assertEquals(agendamentoMaior120000Ate10Dias.getValorTransferencia() * 0.074, agendamentoMaior120000Ate10Dias.getTaxa());
+		Assertions.assertEquals(agendamentoMaior120000Ate5Dias.getValorTransferencia() * 0.083, agendamentoMaior120000Ate5Dias.getTaxa());
 
 	}
 
