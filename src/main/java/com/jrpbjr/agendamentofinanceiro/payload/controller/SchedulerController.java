@@ -4,6 +4,8 @@ import com.jrpbjr.agendamentofinanceiro.payload.job.EmailJob;
 import com.jrpbjr.agendamentofinanceiro.payload.model.EmailRequest;
 import com.jrpbjr.agendamentofinanceiro.payload.model.EmailResponse;
 
+import com.jrpbjr.agendamentofinanceiro.payload.model.OperacaoModel;
+import com.jrpbjr.agendamentofinanceiro.payload.service.OperacaoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +31,9 @@ public class SchedulerController {
 
     @Autowired
     private Scheduler scheduler;
+
+    @Autowired
+    private OperacaoService operacaoService;
 
     @PostMapping("/scheduleEmail")
     public ResponseEntity<EmailResponse> scheduleEmail(@Valid @RequestBody EmailRequest EmailRequest) {
@@ -56,11 +61,15 @@ public class SchedulerController {
         }
     }
 
+    @PostMapping("/calcularTaxa")
+    public Double calcularTaxa(OperacaoModel operacaoModel) {
+        return this.operacaoService.calcularTaxa(operacaoModel);
+    }
+
     @GetMapping("/get")
     public ResponseEntity<String> getApiTest(){
         return ResponseEntity.ok("Get API Test - Pass");
     }
-
 
     private JobDetail buildJobDetail(EmailRequest EmailRequest) {
         JobDataMap jobDataMap = new JobDataMap();

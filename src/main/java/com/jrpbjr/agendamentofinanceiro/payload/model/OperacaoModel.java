@@ -2,20 +2,37 @@ package com.jrpbjr.agendamentofinanceiro.payload.model;
 
 import com.jrpbjr.agendamentofinanceiro.payload.enums.Tipo;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.Date;
 import java.util.Objects;
 
-
+@Entity
 public class OperacaoModel extends EstruturaModel{
 
     private static final long serialVersionUID = 1449321933124430700L;
-
+    @Column
     private String contaOrigem;
+    @Column
     private String contaDestino;
+    @Column
     private Double ValorTransferencia;
+    @Column
     private Double taxa;
+    @Column
     private Date dataAgendamento;
+    @Enumerated(EnumType.STRING)
     private Tipo tipo;
+
+    public OperacaoModel(Integer id) {
+        super();
+    }
+
+    public OperacaoModel() {
+        super();
+    }
 
     public String getContaOrigem() {
         return contaOrigem;
