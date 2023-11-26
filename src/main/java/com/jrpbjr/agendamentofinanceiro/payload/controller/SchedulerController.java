@@ -1,6 +1,7 @@
 package com.jrpbjr.agendamentofinanceiro.payload.controller;
 
 import com.jrpbjr.agendamentofinanceiro.payload.job.EmailJob;
+import com.jrpbjr.agendamentofinanceiro.payload.model.Dtos.OperacaoDto;
 import com.jrpbjr.agendamentofinanceiro.payload.model.EmailRequest;
 import com.jrpbjr.agendamentofinanceiro.payload.model.EmailResponse;
 
@@ -62,7 +63,8 @@ public class SchedulerController {
     }
 
     @PostMapping("/calcularTaxa")
-    public Double calcularTaxa(OperacaoModel operacaoModel) {
+    public Double calcularTaxa(@Valid @RequestBody OperacaoDto operacaoDto) {
+        OperacaoModel operacaoModel = new OperacaoModel(operacaoDto);
         return this.operacaoService.calcularTaxa(operacaoModel);
     }
 
