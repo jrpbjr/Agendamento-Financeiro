@@ -68,6 +68,11 @@ public class SchedulerController {
         return this.operacaoService.calcularTaxa(operacaoModel);
     }
 
+    @PostMapping("/salvarOperacao")
+    public OperacaoModel salvarOperacao(@Valid @RequestBody OperacaoDto operacaoDto) {
+
+    }
+
     @GetMapping("/get")
     public ResponseEntity<String> getApiTest(){
         return ResponseEntity.ok("Get API Test - Pass");
@@ -87,7 +92,6 @@ public class SchedulerController {
                 .storeDurably()
                 .build();
     }
-
 
     private Trigger buildJobTrigger(JobDetail jobDetail, ZonedDateTime startAt) {
         return TriggerBuilder.newTrigger()
