@@ -10,4 +10,5 @@ public interface  OperacaoService {
     public void validarTaxa(OperacaoModel operacaoModel)
         throws NegocioException;
 
+    public OperacaoModel salvarOperacao(OperacaoModel operacaoModel)throws NegocioException;
 }

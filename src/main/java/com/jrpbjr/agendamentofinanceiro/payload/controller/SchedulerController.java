@@ -1,5 +1,6 @@
 package com.jrpbjr.agendamentofinanceiro.payload.controller;
 
+import com.jrpbjr.agendamentofinanceiro.payload.exception.NegocioException;
 import com.jrpbjr.agendamentofinanceiro.payload.job.EmailJob;
 import com.jrpbjr.agendamentofinanceiro.payload.model.Dtos.OperacaoDto;
 import com.jrpbjr.agendamentofinanceiro.payload.model.EmailRequest;
@@ -18,8 +19,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.UUID;
@@ -69,8 +72,11 @@ public class SchedulerController {
     }
 
     @PostMapping("/salvarOperacao")
-    public OperacaoModel salvarOperacao(@Valid @RequestBody OperacaoDto operacaoDto) {
-
+    public ResponseEntity<OperacaoDto> salvarOperacao(@Valid @RequestBody OperacaoDto operacaoDto) throws NegocioException {
+       OperacaoModel operacaoModel = new OperacaoModel(operacaoDto);
+       this.operacaoService.salvarOperacao(operacaoModel);
+       URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(operacaoModel.getId()).toUri();
+       return ResponseEntity.created(uri).build();
     }
 
     @GetMapping("/get")

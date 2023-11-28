@@ -3,13 +3,21 @@ package com.jrpbjr.agendamentofinanceiro.payload.service.impl;
 import com.jrpbjr.agendamentofinanceiro.payload.enums.Tipo;
 import com.jrpbjr.agendamentofinanceiro.payload.exception.NegocioException;
 import com.jrpbjr.agendamentofinanceiro.payload.model.OperacaoModel;
+import com.jrpbjr.agendamentofinanceiro.payload.repositories.OperacaoRepository;
 import com.jrpbjr.agendamentofinanceiro.payload.service.OperacaoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 @Service
 public class OperacaoServiceImpl implements OperacaoService {
+
+
+    @Autowired
+    private OperacaoRepository operacaoRepository;
 
     public Double calcularTaxa(OperacaoModel operacaoModel){
         Double taxa = null;
@@ -40,7 +48,9 @@ public class OperacaoServiceImpl implements OperacaoService {
 
 
     private Double calcularDiferencaDeDias(Date dataMenor, Date dataMaior) {
-        return new Double((dataMaior.getTime() - dataMenor.getTime()) / 86400000L);
+        long diffInMillies = Math.abs(dataMaior.getTime() - dataMenor.getTime());
+        Double diff = (double) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        return diff;
     }
 
     private Double calcularTaxacaoTipoA(OperacaoModel operacaoModel){
@@ -77,7 +87,7 @@ public class OperacaoServiceImpl implements OperacaoService {
             taxa = (operacaoModel.getValorTransferencia() * 0.067);
         } else if ((diferencaDeDias > 5) && (diferencaDeDias <= 10)){
             taxa = (operacaoModel.getValorTransferencia() * 0.074);
-        } else if ((diferencaDeDias > 0) && (diferencaDeDias <= 5)){
+        } else if ((diferencaDeDias >= 0) && (diferencaDeDias <= 5)){
             taxa = (operacaoModel.getValorTransferencia() * 0.083);
         }
         return taxa;
@@ -95,6 +105,12 @@ public class OperacaoServiceImpl implements OperacaoService {
             taxa = this.calcularTaxacaoTipoC(operacaoModel);
         }
         return taxa;
+    }
+
+    public OperacaoModel salvarOperacao(OperacaoModel operacaoModel)throws NegocioException {
+        this.validar(operacaoModel);
+        operacaoModel.setId(null);
+        return operacaoRepository.save(operacaoModel);
     }
 
 
