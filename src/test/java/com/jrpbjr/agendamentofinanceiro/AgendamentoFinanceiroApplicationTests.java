@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.jrpbjr.agendamentofinanceiro.payload.service.OperacaoService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,7 +27,7 @@ class AgendamentoFinanceiroApplicationTests {
 
 	@Test
 	public void taxaTipoATest() throws NegocioException{
-		OperacaoModel operacaoModel = this.criarAgendamento(new Date(), Tipo.A, 100.00);
+		OperacaoModel operacaoModel = this.criarAgendamento(LocalDate.now(), Tipo.A, 100.00);
 		operacaoModel.setTaxa(this.operacaoService.calcularTaxa(operacaoModel));
 		this.operacaoService.validarTaxa(operacaoModel);
 		Assertions.assertEquals(2 + (operacaoModel.getValorTransferencia() * 0.03),operacaoModel.getTaxa());
@@ -36,8 +37,8 @@ class AgendamentoFinanceiroApplicationTests {
 
 	@Test
 	public void taxaTipoBTest() throws NegocioException {
-		Date dataAte30Dias = this.adicionarDia( new Date() , 15);
-		Date dataDemais = this.adicionarDia( new Date() , 35);
+		LocalDate dataAte30Dias = this.adicionarDia( LocalDate.now() , 15);
+		LocalDate dataDemais = this.adicionarDia( LocalDate.now() , 35);
 
 		OperacaoModel agendamentoAte30Dias = this.criarAgendamento(dataAte30Dias, Tipo.B, 100.00);
 		OperacaoModel agendamentoDemais = this.criarAgendamento(dataDemais, Tipo.B, 100.00);
@@ -56,13 +57,13 @@ class AgendamentoFinanceiroApplicationTests {
 
 	@Test
 	public void taxaTipoCTest() throws NegocioException {
-		OperacaoModel agendamentoMaior30Dias = this.criarAgendamento( this.adicionarDia( new Date() , 35) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte30Dias = this.criarAgendamento( this.adicionarDia( new Date() , 30) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte25Dias = this.criarAgendamento( this.adicionarDia( new Date() , 22) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte20Dias = this.criarAgendamento( this.adicionarDia( new Date() , 19) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte15Dias = this.criarAgendamento( this.adicionarDia( new Date() , 13) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte10Dias = this.criarAgendamento( this.adicionarDia( new Date() , 8) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte5Dias = this.criarAgendamento( this.adicionarDia( new Date() , 3) , Tipo.C, 100.00);
+		OperacaoModel agendamentoMaior30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 35) , Tipo.C, 100.00);
+		OperacaoModel agendamentoAte30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 30) , Tipo.C, 100.00);
+		OperacaoModel agendamentoAte25Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 22) , Tipo.C, 100.00);
+		OperacaoModel agendamentoAte20Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 19) , Tipo.C, 100.00);
+		OperacaoModel agendamentoAte15Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 13) , Tipo.C, 100.00);
+		OperacaoModel agendamentoAte10Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 8) , Tipo.C, 100.00);
+		OperacaoModel agendamentoAte5Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 3) , Tipo.C, 100.00);
 
 		List<OperacaoModel> listaAgendamentos = new ArrayList<>();
 		listaAgendamentos.add( agendamentoMaior30Dias );
@@ -91,18 +92,18 @@ class AgendamentoFinanceiroApplicationTests {
 	@Test
 	public void taxaTipoDTest() throws NegocioException {
 		// ATE 25000
-		OperacaoModel agendamentoAte25000 = this.criarAgendamento( this.adicionarDia( new Date() , 0) , Tipo.D, 20000.00);
+		OperacaoModel agendamentoAte25000 = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 0) , Tipo.D, 20000.00);
 		// ATE 120000
-		OperacaoModel agendamentoAte10000030Dias = this.criarAgendamento(this.adicionarDia( new Date() , 15), Tipo.D, 100000.00);
-		OperacaoModel agendamentoAte100000Demais = this.criarAgendamento(this.adicionarDia( new Date() , 35), Tipo.D, 100000.00);
+		OperacaoModel agendamentoAte10000030Dias = this.criarAgendamento(this.adicionarDia( LocalDate.now() , 15), Tipo.D, 100000.00);
+		OperacaoModel agendamentoAte100000Demais = this.criarAgendamento(this.adicionarDia( LocalDate.now(), 35), Tipo.D, 100000.00);
 		// MAIOR 120000
-		OperacaoModel agendamentoMaior120000Maior30Dias = this.criarAgendamento( this.adicionarDia( new Date() , 35) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate30Dias = this.criarAgendamento( this.adicionarDia( new Date() , 30) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate25Dias = this.criarAgendamento( this.adicionarDia( new Date() , 22) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate20Dias = this.criarAgendamento( this.adicionarDia( new Date() , 19) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate15Dias = this.criarAgendamento( this.adicionarDia( new Date() , 13) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate10Dias = this.criarAgendamento( this.adicionarDia( new Date() , 8) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate5Dias = this.criarAgendamento( this.adicionarDia( new Date() , 3) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Maior30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 35) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 30) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate25Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 22) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate20Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 19) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate15Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 13) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate10Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 8) , Tipo.D, 150000.00);
+		OperacaoModel agendamentoMaior120000Ate5Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 3) , Tipo.D, 150000.00);
 
 		List<OperacaoModel> listaAgendamentos = new ArrayList<OperacaoModel>();
 		listaAgendamentos.add( agendamentoAte25000 );
@@ -136,14 +137,11 @@ class AgendamentoFinanceiroApplicationTests {
 
 
 
-	private Date adicionarDia(Date date, int qtdDias) {
-		Calendar calendario = Calendar.getInstance();
-		calendario.setTime(date);
-		calendario.add(Calendar.DAY_OF_MONTH, qtdDias);
-		return calendario.getTime();
+	private LocalDate adicionarDia(LocalDate date, int qtdDias) {
+		return date.plusDays(qtdDias);
 	}
 
-	private OperacaoModel criarAgendamento(Date dataAgendamento, Tipo tipo, Double valorTransferencia) {
+	private OperacaoModel criarAgendamento(LocalDate dataAgendamento, Tipo tipo, Double valorTransferencia) {
 		OperacaoModel operacaoModel = new OperacaoModel();
 		operacaoModel.setContaDestino("000000");
 		operacaoModel.setValorTransferencia(valorTransferencia);

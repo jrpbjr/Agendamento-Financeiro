@@ -6,7 +6,7 @@ import com.jrpbjr.agendamentofinanceiro.payload.model.OperacaoModel;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 
 public class OperacaoDto implements Serializable {
@@ -23,26 +23,14 @@ public class OperacaoDto implements Serializable {
     @NotNull(message = "Taxa deve ser informada.")
     protected Double taxa;
     @NotNull(message = "Data de agendamento deve ser informada.")
-    @JsonFormat(pattern="yyyy-MM-dd")
-    protected Date dataAgendamento;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+    protected LocalDate dataAgendamento;
     @NotNull(message = "Tipo deve ser informado.")
     private Tipo tipo;
 
     public OperacaoDto() {
         super();
     }
-
-    public OperacaoDto(OperacaoModel operacaoModel) {
-        super();
-        this.id = operacaoModel.getId();
-        this.contaOrigem = operacaoModel.getContaOrigem();
-        this.contaDestino = operacaoModel.getContaDestino();
-        this.valorTransferencia = operacaoModel.getValorTransferencia();
-        this.taxa = operacaoModel.getTaxa();
-        this.dataAgendamento = operacaoModel.getDataAgendamento();
-        this.tipo = operacaoModel.getTipo();
-    }
-
 
     public Integer getId() {
         return id;
@@ -84,11 +72,11 @@ public class OperacaoDto implements Serializable {
         this.taxa = taxa;
     }
 
-    public Date getDataAgendamento() {
+    public LocalDate getDataAgendamento() {
         return dataAgendamento;
     }
 
-    public void setDataAgendamento(Date dataAgendamento) {
+    public void setDataAgendamento(LocalDate dataAgendamento) {
         this.dataAgendamento = dataAgendamento;
     }
 

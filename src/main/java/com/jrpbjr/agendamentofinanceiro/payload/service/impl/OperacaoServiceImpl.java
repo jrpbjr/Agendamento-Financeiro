@@ -7,10 +7,8 @@ import com.jrpbjr.agendamentofinanceiro.payload.repositories.OperacaoRepository;
 import com.jrpbjr.agendamentofinanceiro.payload.service.OperacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import java.time.LocalDate;
+import java.time.Period;
 
 @Service
 public class OperacaoServiceImpl implements OperacaoService {
@@ -47,9 +45,9 @@ public class OperacaoServiceImpl implements OperacaoService {
     }
 
 
-    private Double calcularDiferencaDeDias(Date dataMenor, Date dataMaior) {
-        long diffInMillies = Math.abs(dataMaior.getTime() - dataMenor.getTime());
-        Double diff = (double) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+    private Double calcularDiferencaDeDias(LocalDate dataMenor, LocalDate   dataMaior) {
+        Period periodo = Period.between(dataMenor, dataMaior);
+        Double diff = (double) (periodo.getDays() + (periodo.getMonths() * 30) + (periodo.getYears() * 365));
         return diff;
     }
 
@@ -59,7 +57,7 @@ public class OperacaoServiceImpl implements OperacaoService {
 
     private Double calcularTaxacaoTipoB(OperacaoModel operacaoModel){
 
-        Double diferencaDeDias = this.calcularDiferencaDeDias(Calendar.getInstance().getTime(),operacaoModel.getDataAgendamento());
+        Double diferencaDeDias = this.calcularDiferencaDeDias(LocalDate.now(),operacaoModel.getDataAgendamento());
 
         Double taxa = null;
 
@@ -72,7 +70,7 @@ public class OperacaoServiceImpl implements OperacaoService {
     }
 
     private Double calcularTaxacaoTipoC(OperacaoModel operacaoModel) {
-        Double diferencaDeDias = this.calcularDiferencaDeDias(Calendar.getInstance().getTime(), operacaoModel.getDataAgendamento());
+        Double diferencaDeDias = this.calcularDiferencaDeDias(LocalDate.now(), operacaoModel.getDataAgendamento());
         Double taxa = null;
 
         if (diferencaDeDias > 30) {

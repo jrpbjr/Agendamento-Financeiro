@@ -1,5 +1,6 @@
 package com.jrpbjr.agendamentofinanceiro.payload.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jrpbjr.agendamentofinanceiro.payload.enums.Tipo;
 import com.jrpbjr.agendamentofinanceiro.payload.model.Dtos.OperacaoDto;
 
@@ -7,7 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -23,7 +24,7 @@ public class OperacaoModel extends EstruturaModel{
     @Column
     private Double taxa;
     @Column
-    private Date dataAgendamento;
+    private LocalDate dataAgendamento;
     @Enumerated(EnumType.STRING)
     private Tipo tipo;
 
@@ -35,7 +36,7 @@ public class OperacaoModel extends EstruturaModel{
         super();
     }
 
-    public OperacaoModel(Integer id, String contaOrigem, String contaDestino, Double valorTransferencia, Double taxa, Date dataAgendamento, Tipo tipo) {
+    public OperacaoModel(Integer id, String contaOrigem, String contaDestino, Double valorTransferencia, Double taxa, LocalDate dataAgendamento, Tipo tipo) {
         super();
         this.id = id;
         this.contaOrigem = contaOrigem;
@@ -89,11 +90,11 @@ public class OperacaoModel extends EstruturaModel{
         this.taxa = taxa;
     }
 
-    public Date getDataAgendamento() {
+    public LocalDate getDataAgendamento() {
         return dataAgendamento;
     }
 
-    public void setDataAgendamento(Date dataAgendamento) {
+    public void setDataAgendamento(LocalDate dataAgendamento) {
         this.dataAgendamento = dataAgendamento;
     }
 
