@@ -136,7 +136,6 @@ class AgendamentoFinanceiroApplicationTests {
 	}
 
 
-
 	private LocalDate adicionarDia(LocalDate date, int qtdDias) {
 		return date.plusDays(qtdDias);
 	}

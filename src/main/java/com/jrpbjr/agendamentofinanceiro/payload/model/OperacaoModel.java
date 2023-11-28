@@ -79,8 +79,7 @@ public class OperacaoModel extends EstruturaModel{
     }
 
     public void setValorTransferencia(Double valorTransferencia) {
-        valorTransferencia = valorTransferencia;
-    }
+        this.valorTransferencia = valorTransferencia;}
 
     public Double getTaxa() {
         return taxa;
