@@ -41,22 +41,22 @@ public class SchedulerController {
     private OperacaoService operacaoService;
 
     @PostMapping("/scheduleEmail")
-    public ResponseEntity<EmailResponse> scheduleEmail(@Valid @RequestBody EmailRequest EmailRequest) {
+    public ResponseEntity<EmailResponse> scheduleEmail(@Valid @RequestBody EmailRequest emailRequest) {
         try {
-            ZonedDateTime dateTime = ZonedDateTime.of(EmailRequest.getDateTime(), EmailRequest.getTimeZone());
+            ZonedDateTime dateTime = ZonedDateTime.of(emailRequest.getDateTime(), emailRequest.getTimeZone());
             if(dateTime.isBefore(ZonedDateTime.now())) {
-                EmailResponse EmailResponse = new EmailResponse(false,
+                EmailResponse emailResponse = new EmailResponse(false,
                         "dateTime must be after current time");
-                return ResponseEntity.badRequest().body(EmailResponse);
+                return ResponseEntity.badRequest().body(emailResponse);
             }
 
-            JobDetail jobDetail = buildJobDetail(EmailRequest);
+            JobDetail jobDetail = buildJobDetail(emailRequest);
             Trigger trigger = buildJobTrigger(jobDetail, dateTime);
             scheduler.scheduleJob(jobDetail, trigger);
 
-            EmailResponse EmailResponse = new EmailResponse(true,
+            EmailResponse emailResponse = new EmailResponse(true,
                     jobDetail.getKey().getName(), jobDetail.getKey().getGroup(), "Email Scheduled Successfully!");
-            return ResponseEntity.ok(EmailResponse);
+            return ResponseEntity.ok(emailResponse);
         } catch (SchedulerException ex) {
             logger.error("Error scheduling email", ex);
 
