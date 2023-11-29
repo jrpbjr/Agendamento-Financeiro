@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -20,9 +21,9 @@ public class OperacaoModel extends EstruturaModel{
     @Column
     private String contaDestino;
     @Column
-    private Double valorTransferencia;
+    private BigDecimal valorTransferencia;
     @Column
-    private Double taxa;
+    private BigDecimal taxa;
     @Column
     private LocalDate dataAgendamento;
     @Enumerated(EnumType.STRING)
@@ -36,7 +37,7 @@ public class OperacaoModel extends EstruturaModel{
         super();
     }
 
-    public OperacaoModel(Integer id, String contaOrigem, String contaDestino, Double valorTransferencia, Double taxa, LocalDate dataAgendamento, Tipo tipo) {
+    public OperacaoModel(Integer id, String contaOrigem, String contaDestino, BigDecimal valorTransferencia, BigDecimal taxa, LocalDate dataAgendamento, Tipo tipo) {
         super();
         this.id = id;
         this.contaOrigem = contaOrigem;
@@ -74,18 +75,18 @@ public class OperacaoModel extends EstruturaModel{
         this.contaDestino = contaDestino;
     }
 
-    public Double getValorTransferencia() {
+    public BigDecimal getValorTransferencia() {
         return valorTransferencia;
     }
 
-    public void setValorTransferencia(Double valorTransferencia) {
+    public void setValorTransferencia(BigDecimal valorTransferencia) {
         this.valorTransferencia = valorTransferencia;}
 
-    public Double getTaxa() {
+    public BigDecimal getTaxa() {
         return taxa;
     }
 
-    public void setTaxa(Double taxa) {
+    public void setTaxa(BigDecimal taxa) {
         this.taxa = taxa;
     }
 

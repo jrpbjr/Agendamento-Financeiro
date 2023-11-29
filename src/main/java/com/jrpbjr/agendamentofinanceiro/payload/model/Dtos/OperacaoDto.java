@@ -6,6 +6,7 @@ import com.jrpbjr.agendamentofinanceiro.payload.model.OperacaoModel;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 
@@ -19,9 +20,9 @@ public class OperacaoDto implements Serializable {
     @NotNull(message = "Conta de destino deve ser informada.")
     protected String contaDestino;
     @NotNull(message = "Valor da transferência deve ser informado.")
-    protected Double valorTransferencia;
+    protected BigDecimal valorTransferencia;
     @NotNull(message = "Taxa deve ser informada.")
-    protected Double taxa;
+    protected BigDecimal taxa;
     @NotNull(message = "Data de agendamento deve ser informada.")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     protected LocalDate dataAgendamento;
@@ -56,19 +57,19 @@ public class OperacaoDto implements Serializable {
         this.contaDestino = contaDestino;
     }
 
-    public Double getValorTransferencia() {
+    public BigDecimal getValorTransferencia() {
         return valorTransferencia;
     }
 
-    public void setValorTransferencia(Double valorTransferencia) {
+    public void setValorTransferencia(BigDecimal valorTransferencia) {
         this.valorTransferencia = valorTransferencia;
     }
 
-    public Double getTaxa() {
+    public BigDecimal getTaxa() {
         return taxa;
     }
 
-    public void setTaxa(Double taxa) {
+    public void setTaxa(BigDecimal taxa) {
         this.taxa = taxa;
     }
 

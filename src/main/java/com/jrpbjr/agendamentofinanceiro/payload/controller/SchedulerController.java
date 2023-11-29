@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -66,7 +67,7 @@ public class SchedulerController {
     }
 
     @PostMapping("/calcularTaxa")
-    public Double calcularTaxa(@Valid @RequestBody OperacaoDto operacaoDto) {
+    public BigDecimal calcularTaxa(@Valid @RequestBody OperacaoDto operacaoDto) {
         OperacaoModel operacaoModel = new OperacaoModel(operacaoDto);
         return this.operacaoService.calcularTaxa(operacaoModel);
     }
