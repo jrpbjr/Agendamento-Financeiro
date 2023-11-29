@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.jrpbjr.agendamentofinanceiro.payload.service.OperacaoService;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,11 +28,17 @@ class AgendamentoFinanceiroApplicationTests {
 
 	@Test
 	public void taxaTipoATest() throws NegocioException{
-		OperacaoModel operacaoModel = this.criarAgendamento(LocalDate.now(), Tipo.A, 100.00);
+		BigDecimal TaxacaoTipoA = new BigDecimal("0.03");
+		OperacaoModel operacaoModel = this.criarAgendamento(LocalDate.now(), Tipo.A, new BigDecimal("100.00"));
 		operacaoModel.setTaxa(this.operacaoService.calcularTaxa(operacaoModel));
 		this.operacaoService.validarTaxa(operacaoModel);
-		Assertions.assertEquals(2 + (operacaoModel.getValorTransferencia() * 0.03),operacaoModel.getTaxa());
 
+		//Assertions.assertEquals((operacaoModel.getValorTransferencia().multiply(TaxacaoTipoA).add(new BigDecimal("2")).setScale(1)),operacaoModel.getTaxa().setScale(1));
+		Assertions.assertEquals(
+				(operacaoModel.getValorTransferencia().multiply(TaxacaoTipoA).add(new BigDecimal("2"))).setScale(1),
+				operacaoModel.getTaxa().setScale(1),
+				"Os valores da taxa não são iguais"
+		);
 
 	}
 
@@ -40,8 +47,11 @@ class AgendamentoFinanceiroApplicationTests {
 		LocalDate dataAte30Dias = this.adicionarDia( LocalDate.now() , 15);
 		LocalDate dataDemais = this.adicionarDia( LocalDate.now() , 35);
 
-		OperacaoModel agendamentoAte30Dias = this.criarAgendamento(dataAte30Dias, Tipo.B, 100.00);
-		OperacaoModel agendamentoDemais = this.criarAgendamento(dataDemais, Tipo.B, 100.00);
+		BigDecimal TaxacaoTipoBdataAte30Dias = new BigDecimal("0.1");
+		BigDecimal TaxacaoTipoBdataDemais = new BigDecimal("0.08");
+
+		OperacaoModel agendamentoAte30Dias = this.criarAgendamento(dataAte30Dias, Tipo.B, new BigDecimal("100.00"));
+		OperacaoModel agendamentoDemais = this.criarAgendamento(dataDemais, Tipo.B, new BigDecimal("100.00"));
 
 		agendamentoAte30Dias.setTaxa( this.operacaoService.calcularTaxa(agendamentoAte30Dias) );
 		agendamentoDemais.setTaxa( this.operacaoService.calcularTaxa(agendamentoDemais) );
@@ -49,21 +59,36 @@ class AgendamentoFinanceiroApplicationTests {
 		this.operacaoService.validarTaxa(agendamentoAte30Dias);
 		this.operacaoService.validarTaxa(agendamentoDemais);
 
-		Assertions.assertEquals(agendamentoAte30Dias.getValorTransferencia() * 0.1, agendamentoAte30Dias.getTaxa());
-		Assertions.assertEquals(agendamentoDemais.getValorTransferencia() * 0.08, agendamentoDemais.getTaxa());
+		//Assertions.assertEquals(agendamentoAte30Dias.getValorTransferencia().multiply(TaxacaoTipoBdataAte30Dias), agendamentoAte30Dias.getTaxa());
+		//Assertions.assertEquals(agendamentoDemais.getValorTransferencia().multiply(TaxacaoTipoBdataDemais), agendamentoDemais.getTaxa());
 
+		// Definindo a escala correta
+		BigDecimal taxaEsperadaAte30Dias = agendamentoAte30Dias.getValorTransferencia().multiply(TaxacaoTipoBdataAte30Dias).setScale(1, BigDecimal.ROUND_HALF_UP);
+		BigDecimal taxaEsperadaDemais = agendamentoDemais.getValorTransferencia().multiply(TaxacaoTipoBdataDemais).setScale(1, BigDecimal.ROUND_HALF_UP);
+
+		Assertions.assertEquals(taxaEsperadaAte30Dias, agendamentoAte30Dias.getTaxa());
+		Assertions.assertEquals(taxaEsperadaDemais, agendamentoDemais.getTaxa());
 	}
 
 
 	@Test
 	public void taxaTipoCTest() throws NegocioException {
-		OperacaoModel agendamentoMaior30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 35) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 30) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte25Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 22) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte20Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 19) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte15Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 13) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte10Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 8) , Tipo.C, 100.00);
-		OperacaoModel agendamentoAte5Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 3) , Tipo.C, 100.00);
+
+		BigDecimal taxaTipoCMaior30Dias = new BigDecimal("0.012");
+		BigDecimal taxaTipoCAte30Dias = new BigDecimal("0.021");
+		BigDecimal taxaTipoCAte25Dias = new BigDecimal("0.043");
+		BigDecimal taxaTipoCAte20Dias = new BigDecimal("0.054");
+		BigDecimal taxaTipoCAte15Dias = new BigDecimal("0.067");
+		BigDecimal taxaTipoCAte10Dias = new BigDecimal("0.074");
+		BigDecimal taxaTipoCAte5Dias = new BigDecimal("0.083");
+
+		OperacaoModel agendamentoMaior30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 35) , Tipo.C, new BigDecimal("100.00"));
+		OperacaoModel agendamentoAte30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 30) , Tipo.C, new BigDecimal("100.00"));
+		OperacaoModel agendamentoAte25Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 22) , Tipo.C, new BigDecimal("100.00"));
+		OperacaoModel agendamentoAte20Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 19) , Tipo.C, new BigDecimal("100.00"));
+		OperacaoModel agendamentoAte15Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 13) , Tipo.C, new BigDecimal("100.00"));
+		OperacaoModel agendamentoAte10Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 8) , Tipo.C, new BigDecimal("100.00"));
+		OperacaoModel agendamentoAte5Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 3) , Tipo.C, new BigDecimal("100.00"));
 
 		List<OperacaoModel> listaAgendamentos = new ArrayList<>();
 		listaAgendamentos.add( agendamentoMaior30Dias );
@@ -79,31 +104,49 @@ class AgendamentoFinanceiroApplicationTests {
 			this.operacaoService.validarTaxa(OperacaoModel);
 		}
 
-		Assertions.assertEquals(agendamentoMaior30Dias.getValorTransferencia() * 0.012, agendamentoMaior30Dias.getTaxa());
-		Assertions.assertEquals(agendamentoAte30Dias.getValorTransferencia() * 0.021, agendamentoAte30Dias.getTaxa());
-		Assertions.assertEquals(agendamentoAte25Dias.getValorTransferencia() * 0.043, agendamentoAte25Dias.getTaxa());
-		Assertions.assertEquals(agendamentoAte20Dias.getValorTransferencia() * 0.054, agendamentoAte20Dias.getTaxa());
-		Assertions.assertEquals(agendamentoAte15Dias.getValorTransferencia() * 0.067, agendamentoAte15Dias.getTaxa());
-		Assertions.assertEquals(agendamentoAte10Dias.getValorTransferencia() * 0.074, agendamentoAte10Dias.getTaxa());
-		Assertions.assertEquals(agendamentoAte5Dias.getValorTransferencia() * 0.083, agendamentoAte5Dias.getTaxa());
-
+		// Definindo a escala correta
+		//BigDecimal escala1 = new BigDecimal("1");
+		Assertions.assertEquals(agendamentoMaior30Dias.getValorTransferencia().multiply(taxaTipoCMaior30Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoMaior30Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoAte30Dias.getValorTransferencia().multiply(taxaTipoCAte30Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoAte30Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoAte25Dias.getValorTransferencia().multiply(taxaTipoCAte25Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoAte25Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoAte20Dias.getValorTransferencia().multiply(taxaTipoCAte20Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoAte20Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoAte15Dias.getValorTransferencia().multiply(taxaTipoCAte15Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoAte15Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoAte10Dias.getValorTransferencia().multiply(taxaTipoCAte10Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoAte10Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoAte5Dias.getValorTransferencia().multiply(taxaTipoCAte5Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoAte5Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
 	}
 
 	@Test
 	public void taxaTipoDTest() throws NegocioException {
+
 		// ATE 25000
-		OperacaoModel agendamentoAte25000 = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 0) , Tipo.D, 20000.00);
+		BigDecimal taxaTipoDAte25000 = new BigDecimal("0.03");
+		OperacaoModel agendamentoAte25000 = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 0) , Tipo.D, new BigDecimal("20000.00"));
 		// ATE 120000
-		OperacaoModel agendamentoAte10000030Dias = this.criarAgendamento(this.adicionarDia( LocalDate.now() , 15), Tipo.D, 100000.00);
-		OperacaoModel agendamentoAte100000Demais = this.criarAgendamento(this.adicionarDia( LocalDate.now(), 35), Tipo.D, 100000.00);
+		BigDecimal	taxaTipoDAte10000030Dias = new BigDecimal("0.1");
+		OperacaoModel agendamentoAte10000030Dias = this.criarAgendamento(this.adicionarDia( LocalDate.now() , 15), Tipo.D, new BigDecimal("100000.00"));
+		BigDecimal	taxaTipoDAte100000Demais = new BigDecimal("0.08");
+		OperacaoModel agendamentoAte100000Demais = this.criarAgendamento(this.adicionarDia( LocalDate.now(), 35), Tipo.D, new BigDecimal("100000.00"));
 		// MAIOR 120000
-		OperacaoModel agendamentoMaior120000Maior30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 35) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 30) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate25Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 22) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate20Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 19) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate15Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 13) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate10Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 8) , Tipo.D, 150000.00);
-		OperacaoModel agendamentoMaior120000Ate5Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 3) , Tipo.D, 150000.00);
+		BigDecimal	taxaTipoDMaior120000Maior30Dias = new BigDecimal("0.012");
+		OperacaoModel agendamentoMaior120000Maior30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 35) , Tipo.D, new BigDecimal("150000.00"));
+
+		BigDecimal	taxaTipoDMaior120000Ate30Dias = new BigDecimal("0.021");
+		OperacaoModel agendamentoMaior120000Ate30Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 30) , Tipo.D, new BigDecimal("150000.00"));
+
+		BigDecimal	taxaTipoDMaior120000Ate25Dias = new BigDecimal("0.043");
+		OperacaoModel agendamentoMaior120000Ate25Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 22) , Tipo.D, new BigDecimal("150000.00"));
+
+		BigDecimal	taxaTipoDMaior120000Ate20Dias = new BigDecimal("0.054");
+		OperacaoModel agendamentoMaior120000Ate20Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 19) , Tipo.D, new BigDecimal("150000.00"));
+
+		BigDecimal	taxaTipoDMaior120000Ate15Dias = new BigDecimal("0.067");
+		OperacaoModel agendamentoMaior120000Ate15Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 13) , Tipo.D, new BigDecimal("150000.00"));
+
+		BigDecimal	taxaTipoDMaior120000Ate10Dias = new BigDecimal("0.074");
+		OperacaoModel agendamentoMaior120000Ate10Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now(), 8) , Tipo.D, new BigDecimal("150000.00"));
+
+		BigDecimal	taxaTipoDMaior120000Ate5Dias = new BigDecimal("0.083");
+		OperacaoModel agendamentoMaior120000Ate5Dias = this.criarAgendamento( this.adicionarDia( LocalDate.now() , 3) , Tipo.D, new BigDecimal("150000.00"));
 
 		List<OperacaoModel> listaAgendamentos = new ArrayList<OperacaoModel>();
 		listaAgendamentos.add( agendamentoAte25000 );
@@ -121,18 +164,19 @@ class AgendamentoFinanceiroApplicationTests {
 			OperacaoModel.setTaxa( this.operacaoService.calcularTaxa(OperacaoModel) );
 			this.operacaoService.validarTaxa(OperacaoModel);
 		}
+		// Definindo a escala correta
 
-		Assertions.assertEquals(2 + (agendamentoAte25000.getValorTransferencia() * 0.03), agendamentoAte25000.getTaxa());
-		Assertions.assertEquals(agendamentoAte10000030Dias.getValorTransferencia() * 0.1, agendamentoAte10000030Dias.getTaxa());
-		Assertions.assertEquals(agendamentoAte100000Demais.getValorTransferencia() * 0.08, agendamentoAte100000Demais.getTaxa());
-		Assertions.assertEquals(agendamentoMaior120000Maior30Dias.getValorTransferencia() * 0.012, agendamentoMaior120000Maior30Dias.getTaxa());
-		Assertions.assertEquals(agendamentoMaior120000Ate30Dias.getValorTransferencia() * 0.021, agendamentoMaior120000Ate30Dias.getTaxa());
-		Assertions.assertEquals(agendamentoMaior120000Ate25Dias.getValorTransferencia() * 0.043, agendamentoMaior120000Ate25Dias.getTaxa());
-		Assertions.assertEquals(agendamentoMaior120000Ate20Dias.getValorTransferencia() * 0.054, agendamentoMaior120000Ate20Dias.getTaxa());
-		Assertions.assertEquals(agendamentoMaior120000Ate15Dias.getValorTransferencia() * 0.067, agendamentoMaior120000Ate15Dias.getTaxa());
-		Assertions.assertEquals(agendamentoMaior120000Ate10Dias.getValorTransferencia() * 0.074, agendamentoMaior120000Ate10Dias.getTaxa());
-		Assertions.assertEquals(agendamentoMaior120000Ate5Dias.getValorTransferencia() * 0.083, agendamentoMaior120000Ate5Dias.getTaxa());
-
+		BigDecimal escala1 = new BigDecimal("1");
+		Assertions.assertEquals(agendamentoAte25000.getValorTransferencia().multiply(taxaTipoDAte25000).add(new BigDecimal("2")).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoAte25000.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoAte10000030Dias.getValorTransferencia().multiply(taxaTipoDAte10000030Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoAte10000030Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoAte100000Demais.getValorTransferencia().multiply(taxaTipoDAte100000Demais).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoAte100000Demais.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoMaior120000Maior30Dias.getValorTransferencia().multiply(taxaTipoDMaior120000Maior30Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoMaior120000Maior30Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoMaior120000Ate30Dias.getValorTransferencia().multiply(taxaTipoDMaior120000Ate30Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoMaior120000Ate30Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoMaior120000Ate25Dias.getValorTransferencia().multiply(taxaTipoDMaior120000Ate25Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoMaior120000Ate25Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoMaior120000Ate20Dias.getValorTransferencia().multiply(taxaTipoDMaior120000Ate20Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoMaior120000Ate20Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoMaior120000Ate15Dias.getValorTransferencia().multiply(taxaTipoDMaior120000Ate15Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoMaior120000Ate15Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoMaior120000Ate10Dias.getValorTransferencia().multiply(taxaTipoDMaior120000Ate10Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoMaior120000Ate10Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
+		Assertions.assertEquals(agendamentoMaior120000Ate5Dias.getValorTransferencia().multiply(taxaTipoDMaior120000Ate5Dias).setScale(1, BigDecimal.ROUND_HALF_UP), agendamentoMaior120000Ate5Dias.getTaxa().setScale(1, BigDecimal.ROUND_HALF_UP));
 	}
 
 
@@ -140,7 +184,7 @@ class AgendamentoFinanceiroApplicationTests {
 		return date.plusDays(qtdDias);
 	}
 
-	private OperacaoModel criarAgendamento(LocalDate dataAgendamento, Tipo tipo, Double valorTransferencia) {
+	private OperacaoModel criarAgendamento(LocalDate dataAgendamento, Tipo tipo, BigDecimal valorTransferencia) {
 		OperacaoModel operacaoModel = new OperacaoModel();
 		operacaoModel.setContaDestino("000000");
 		operacaoModel.setValorTransferencia(valorTransferencia);
