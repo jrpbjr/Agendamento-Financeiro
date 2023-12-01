@@ -1,6 +1,6 @@
 package com.jrpbjr.agendamentofinanceiro.payload.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.jrpbjr.agendamentofinanceiro.payload.enums.Tipo;
 import com.jrpbjr.agendamentofinanceiro.payload.model.Dtos.OperacaoDto;
 

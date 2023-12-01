@@ -2,7 +2,7 @@ package com.jrpbjr.agendamentofinanceiro.payload.model.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jrpbjr.agendamentofinanceiro.payload.enums.Tipo;
-import com.jrpbjr.agendamentofinanceiro.payload.model.OperacaoModel;
+
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -69,9 +69,6 @@ public class OperacaoDto implements Serializable {
         return taxa;
     }
 
-    public void setTaxa(BigDecimal taxa) {
-        this.taxa = taxa;
-    }
 
     public LocalDate getDataAgendamento() {
         return dataAgendamento;

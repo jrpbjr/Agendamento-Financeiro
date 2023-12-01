@@ -31,7 +31,7 @@ public class OperacaoServiceImpl implements OperacaoService {
         } else if (Tipo.D.equals(operacaoModel.getTipo())){
             taxa = calcularTaxacaoTipoD(operacaoModel);
         }
-        return taxa;
+        return taxa.setScale(1);
     }
 
     public void validarTaxa(OperacaoModel operacaoModel) throws NegocioException{
